@@ -18,12 +18,14 @@ class UpdateController extends \yii\web\Controller
     public function actionPull()
     {
         $path = dirname(__FILE__) . '/..';
-        return `git -C $path pull`;
+        $result = `git -C $path pull`;
+        return "<pre>$result</pre>";
     }
 
     public function actionMigrate()
     {
-        `sqlite3 -init add-bonus.sql ..\db\database.db`;
+        $result = `sqlite3 -init add-bonus.sql ..\db\database.db`;
+        return "<pre>$result</pre>";
     }
 
 }
