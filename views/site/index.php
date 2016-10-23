@@ -248,7 +248,7 @@ $this->title = 'Тайм';
 						<input type="text" name="phone" class="form-control" placeholder="Телефон" onFocus="$(this).parent().removeClass('has-error')">
 					</div>
 					<div class="col-md-6">
-						<?= DateTimePicker::widget([
+						?= DateTimePicker::widget([
 						    'name' => 'time',
 						    'options' => ['placeholder' => 'Время'],
 						    'type' => DateTimePicker::TYPE_INPUT,
