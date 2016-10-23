@@ -248,7 +248,14 @@ $this->title = 'Тайм';
 						<input type="text" name="phone" class="form-control" placeholder="Телефон" onFocus="$(this).parent().removeClass('has-error')">
 					</div>
 					<div class="col-md-6">
-						?= DateTimePicker::widget([
+                        <input id="bronetime" name="time" placeholder="Время" />
+                        <script>
+                            $(function () {
+                                $('#bronetime').datetimepicker({value:'<?=date('d-m-Y H:i')?>', format: "d-m-Y H:i"});
+                                $.datetimepicker.setLocale('ru');
+                            })
+                        </script>
+						<!--?= DateTimePicker::widget([
 						    'name' => 'time',
 						    'options' => ['placeholder' => 'Время'],
 						    'type' => DateTimePicker::TYPE_INPUT,
@@ -258,7 +265,7 @@ $this->title = 'Тайм';
 						        'autoclose' => true,
 						        'format' => 'dd-mm-yyyy H:ii',
 						    ]
-						]); ?>
+						]); ?-->
 					</div>
 				</div>
 			</div>

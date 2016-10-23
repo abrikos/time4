@@ -8,6 +8,7 @@
 namespace app\assets;
 
 use yii\web\AssetBundle;
+use yii\web\View;
 
 /**
  * @author Qiang Xue <qiang.xue@gmail.com>
@@ -17,9 +18,11 @@ class AppAsset extends AssetBundle
 {
     public $basePath = '@webroot';
     public $baseUrl = '@web';
+    public $jsOptions = ['position' => View::POS_HEAD];
     public $css = [
         'css/site.css',
         'css/paper-theme.css',
+        'css/jquery.datetimepicker.css',
     ];
     public $js = [
         'js/master-stack.js',
@@ -30,7 +33,8 @@ class AppAsset extends AssetBundle
         'js/shift.js',
         'js/haircut.js',
         'js/tmpl.min.js',
-        'js/total-table.js'
+        'js/total-table.js',
+        'js/jquery.datetimepicker.full.min.js'
     ];
     public $depends = [
         'yii\web\YiiAsset',
