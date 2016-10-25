@@ -1,39 +1,43 @@
-$('#add-income').click(function() {
-	var form = $(this).parent().siblings('.modal-body')
-	var name = form.find('[name=name]')
-	var amount = form.find('[name=amount]')
-	var validate = true
-	if (!name.val()) {
-		name.parent().addClass('has-error')
-		validate = false
-	}
-	if (!amount.val() || !$.isNumeric(amount.val())) {
-		amount.parent().addClass('has-error')
-		validate = false
-	}
-	if (validate) {
-		$.get('site/add-income',
-			{
-				'name': name.val(),
-				'amount': amount.val(),
-			},
-			function(result) {
-				if (result) {
-					$('#income-modal').modal('hide')
-					reloadIncome()
-				}
-			})
-	}
-})
+$(function () {
+	$('#add-income').click(function() {
+		var form = $(this).parent().siblings('.modal-body')
+		var name = form.find('[name=name]')
+		var amount = form.find('[name=amount]')
+		var validate = true
+		if (!name.val()) {
+			name.parent().addClass('has-error')
+			validate = false
+		}
+		if (!amount.val() || !$.isNumeric(amount.val())) {
+			amount.parent().addClass('has-error')
+			validate = false
+		}
+		if (validate) {
+			$.get('site/add-income',
+				{
+					'name': name.val(),
+					'amount': amount.val(),
+				},
+				function(result) {
+					if (result) {
+						$('#income-modal').modal('hide')
+						reloadIncome()
+					}
+				})
+		}
+	})
 
-$('#income-modal').on('shown.bs.modal', function () {
-	$(this).find('[name=name]').focus()
-})
+	$('#income-modal').on('shown.bs.modal', function () {
+		$(this).find('[name=name]').focus()
+	})
 
-$('#income-modal').on('hidden.bs.modal', function () {
-	$(this).find('[name=name]').val('')
-	$(this).find('[name=amount]').val('')
-})
+	$('#income-modal').on('hidden.bs.modal', function () {
+		$(this).find('[name=name]').val('')
+		$(this).find('[name=amount]').val('')
+	});
+	$('.remove-income').click(removeIncome)
+});
+
 
 function reloadIncome() {
 	$.get('site/get-income', null,
@@ -58,7 +62,7 @@ function reloadIncome() {
 		}, 'JSON')
 }
 
-$('.remove-income').click(removeIncome)
+
 
 function removeIncome() {
 	var row = $(this).closest('tr')

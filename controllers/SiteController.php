@@ -244,9 +244,9 @@ class SiteController extends Controller
         $result['haircut_bonus'] = $haircut->bonus ? $haircut->bonus->price : null;
         $result['card_bonus'] = $haircut->card ? $haircut->card->bonus : 0;
 
-	    $result['original_price'] = $haircut->original_price;
+	    $result['discount'] = $haircut->discount;
 	    $result['price'] = $haircut->price;
-	    $result['form_hide'] = $result['haircut_bonus'] || ($haircut->price != $haircut->original_price) ;
+	    $result['form_hide'] = $result['haircut_bonus'] || $haircut->discount ;
         return json_encode($result);
     }
 
@@ -270,19 +270,20 @@ class SiteController extends Controller
         $haircut->master_id = $masterID;
         $haircut->price = 0;
         $haircut->time = time();
-        return ($haircut->save() ? json_encode($haircut->attributes) : false);
+        return ($haircut->save() ? json_encode(['haircut'=>$haircut->attributes,'input'=>$haircut->drawInputCell()]) : false);
     }
 
     public function actionUpdateHaircutprice($id, $price = null){
         $haircut = Haircut::findOne($id);
         if($haircut->bonus_id){
-            $card = Card::findOne($haircut->bonus->card);
-            $haircut->bonus->delete();
-            $card->calcBonuses();
+            return Json::encode(['error'=>'Назначен бонус. Редактирование не доступно.','haircut'=>$haircut->attributes]);
+        }
+        if($haircut->discount){
+            return Json::encode(['error'=>'Бонус вычтен. Редактирование не доступно.', 'haircut'=>$haircut->attributes]);
         }
         $haircut->price = $price;
-        $haircut->original_price = $price;
-        return ($haircut->save() ? json_encode($haircut->attributes) : false);
+        $haircut->time = time();
+        return ($haircut->save() ? Json::encode(['haircut'=>$haircut->attributes]) : false);
     }
 
     public function actionUpdateHaircut($id, $price = null, $note = null, $card_number=null, $bonus_discount=null)

@@ -61,7 +61,7 @@ class HaircutController extends \yii\web\Controller
         if($reduce < 100)
              return Json::encode(['status'=>['class'=>'warning', 'message'=>"Снимается только более 100 бонусов"]]);
         //$haircut->old_price = $haircut->price;
-        $haircut->price = $haircut->price - $reduce;
+        $haircut->discount = $reduce;
         $haircut->save();
         //обнуляем израсходованные бонусы
         $connection = Yii::$app->getDb();
@@ -74,5 +74,19 @@ class HaircutController extends \yii\web\Controller
         $status = ['class'=>'success','message'=>$reduce . ' бонусов переведено в оплату '  ];
         return Json::encode(['status'=>$status, 'bonus'=>$card->bonus, 'card'=>$card, 'haircut'=>$haircut]);
     }
+
+    public function actionChangePrice($id, $price){
+        $haircut = Haircut::findOne($id);
+        if($haircut->bonus_id){
+            return Json::encode(['error'=>'Назначен бонус. Редактирование не доступно.','haircut'=>$haircut->attributes]);
+        }
+        if($haircut->discount){
+            return Json::encode(['error'=>'Бонус вычтен. Редактирование не доступно.', 'haircut'=>$haircut->attributes]);
+        }
+        $haircut->price = $price;
+        $haircut->time = time();
+        return ($haircut->save() ? Json::encode(['haircut'=>$haircut->attributes]) : false);
+    }
+
 
 }

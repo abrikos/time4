@@ -20,16 +20,16 @@
     Номер карты: <b>{%=o.card%}</b> (бонусов на карте <span id="card-bonus" >{%=o.card_bonus%}</span>)
 
     <br/>
-    Стоимость услуги: <span >{%=o.original_price%}</span> руб.
+    Стоимость услуги: <span >{%=o.price%}</span> руб.
 
-    {% if (o.price!=o.original_price) { %}
-    <br/> Оплачено бонусами {%=o.original_price-o.price%}
-    <br/> К оплате с учетом бонусов: <b>{%=o.price%}</b> руб.
-    {% } %}
+
+    <br/> Оплачено бонусами: {%=o.discount%}
+    <br/> К оплате с учетом бонусов: <b id="haircut-payment">{%=o.price-o.discount%}</b> руб.
+
 
     {% if (o.haircut_bonus) { %}
     <br/>
-    Платеж добавил <span id="haircut-bonus">{%=o.haircut_bonus%}</span> бонусов
+    Платеж добавил <span id="haircut-bonus">{%=o.haircut_bonus%}</span> бонусов на карту
     {% } %}
 </div>
 

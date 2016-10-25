@@ -1,41 +1,44 @@
-$('#add-reserve').click(function() {
-	var form = $(this).parent().siblings('.modal-body')
-	var name = form.find('[name=name]')
-	var phone = form.find('[name=phone]')
-	var time = form.find('[name=time]')
-	var validate = true
-	if (!name.val()) {
-		name.parent().addClass('has-error')
-		validate = false
-	}
-	if (!phone.val()) {
-		phone.parent().addClass('has-error')
-		validate = false
-	}
-	if (validate) {
-		$.get('site/add-reserve',
-			{
-				'name': name.val(),
-				'phone': phone.val(),
-				'time': time.val(),
-			},
-			function(result) {
-				if (result) {
-					$('#reserve-modal').modal('hide')
-					reloadReserve()
-				}
-			})
-	}
-})
+$(function () {
+	$('#add-reserve').click(function() {
+		var form = $(this).parent().siblings('.modal-body')
+		var name = form.find('[name=name]')
+		var phone = form.find('[name=phone]')
+		var time = form.find('[name=time]')
+		var validate = true
+		if (!name.val()) {
+			name.parent().addClass('has-error')
+			validate = false
+		}
+		if (!phone.val()) {
+			phone.parent().addClass('has-error')
+			validate = false
+		}
+		if (validate) {
+			$.get('site/add-reserve',
+				{
+					'name': name.val(),
+					'phone': phone.val(),
+					'time': time.val(),
+				},
+				function(result) {
+					if (result) {
+						$('#reserve-modal').modal('hide')
+						reloadReserve()
+					}
+				})
+		}
+	})
 
-$('#reserve-modal').on('shown.bs.modal', function () {
-	$(this).find('[name=name]').focus()
-})
+	$('#reserve-modal').on('shown.bs.modal', function () {
+		$(this).find('[name=name]').focus()
+	})
 
-$('#reserve-modal').on('hidden.bs.modal', function () {
-	$(this).find('[name=name]').val('')
-	$(this).find('[name=phone]').val('')
-})
+	$('#reserve-modal').on('hidden.bs.modal', function () {
+		$(this).find('[name=name]').val('')
+		$(this).find('[name=phone]').val('')
+	})
+	$('.remove-reserve').click(removeReserve)
+});
 
 function reloadReserve() {
 	$.get('site/get-reserve', null,
@@ -60,7 +63,7 @@ function reloadReserve() {
 		}, 'JSON')
 }
 
-$('.remove-reserve').click(removeReserve)
+
 
 function removeReserve() {
 	var row = $(this).closest('tr')

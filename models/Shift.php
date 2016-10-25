@@ -153,9 +153,23 @@ class Shift extends \yii\db\ActiveRecord
         return count($this->haircuts);
     }
 
-    public function getFinalCash()
+    public function getFinalPrice()
     {
         return $this->cash + $this->total + $this->salesAmount + $this->incomeAmount - $this->administratorPayment - $this->expenseAmount;
+    }
+
+    public function getFinalCash()
+    {
+        return $this->getFinalPrice() - $this->getDiscounts();
+    }
+
+    public function getDiscounts()
+    {
+        $sum = 0;
+        foreach ($this->haircuts as $item) {
+            $sum += $item->discount;
+        }
+        return $sum;
     }
 
     public function getAdministratorPayment()
@@ -263,11 +277,14 @@ class Shift extends \yii\db\ActiveRecord
             $table["{$master->time}{$master->id}"] = [];
             $haircuts["{$master->time}{$master->id}"] = [];
             foreach ($master->haircuts as $haircut) {
-            	$isBonus = $haircut->bonus_id ? ' hasBonus ' : '';
-            	$isDiscount = $haircut->price!=$haircut->original_price ? ' hasDiscount ' : '';
-                $table["{$master->time}{$master->id}"][] =
-                    "<span class='editable $isBonus $isDiscount' data-haircut-id='{$haircut->id}' title='{$haircut->shortTime}' style='float: left' id='haircut-price-{$haircut->id}'>".$haircut->price ."</span>
-                    <span class='btn btn-xs btn-default glyphicon glyphicon-pencil' style='float: right' data-toggle='modal' data-target='#haircut-modal'></span>";
+                $input = $haircut->drawInputCell();
+                $span =
+                    "<span class='editable' data-haircut-id='{$haircut->id}' title='{$haircut->shortTime}' style='float: left' id='haircut-price-{$haircut->id}'>".$haircut->price ."</span>";
+                $btn =" <span class='btn btn-xs btn-default glyphicon glyphicon-pencil' style='float: right' data-toggle='modal' data-target='#haircut-modal'></span>";
+
+                $cell = $span.$btn;
+                $cell = $input;
+                $table["{$master->time}{$master->id}"][] = $cell;
                 $haircuts["{$master->time}{$master->id}"][] = $haircut->price;
             }
         }
@@ -298,12 +315,24 @@ class Shift extends \yii\db\ActiveRecord
         $table[0]['sum'] = 'Сумма';
         foreach ($this->masters as $master) {
             $id = "{$master->time}{$master->id}";
-            $sum = 0;
+            $sum1 = 0;
             foreach ($master->haircuts as $haircut) {
-                $sum += $haircut->price;
+                $sum1 += $haircut->price;
             }
-            $table[$id]['sum'] = $sum;
+            $table[$id]['sum'] = $sum1;
         }
+
+        $table[0]['discount'] = 'Бонусами';
+        foreach ($this->masters as $master) {
+            $id = "{$master->time}{$master->id}";
+            $sum2 = 0;
+            foreach ($master->haircuts as $haircut) {
+                $sum2 += $haircut->discount;
+            }
+            $table[$id]['discount'] = '-'.$sum2;
+        }
+
+
         $table[0]['material'] = 'Материалы';
         foreach ($this->masters as $master) {
             $id = "{$master->time}{$master->id}";

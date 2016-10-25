@@ -1,3 +1,6 @@
+$(function () {
+
+
 $('#add-sale').click(function() {
 	var form = $(this).parent().siblings('.modal-body')
 	var name = form.find('[name=name]')
@@ -34,6 +37,8 @@ $('#sale-modal').on('hidden.bs.modal', function () {
 	$(this).find('[name=name]').val('')
 	$(this).find('[name=amount]').val('')
 })
+	$('.remove-sale').click(removeSale)
+});
 
 function reloadSale() {
 	$.get('site/get-sale', null,
@@ -58,7 +63,7 @@ function reloadSale() {
 		}, 'JSON')
 }
 
-$('.remove-sale').click(removeSale)
+
 
 function removeSale() {
 	var row = $(this).closest('tr')

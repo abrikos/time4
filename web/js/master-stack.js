@@ -1,3 +1,6 @@
+$(function () {
+	$('.remove-master-from-stack').click(removeMasterFromStack)
+})
 $('#add-master-to-stack').click(function() {
 	var master = $(this).parent().siblings('td:last').children('select')
 	var masterID = master.val()
@@ -24,7 +27,7 @@ $('#add-master-to-stack').click(function() {
 		})
 })
 
-$('.remove-master-from-stack').click(removeMasterFromStack)
+
 
 function removeMasterFromStack() {
 	var row = $(this).closest('tr')

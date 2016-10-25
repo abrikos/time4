@@ -25,7 +25,7 @@ $this->title = 'Тайм';
 		<div class="panel panel-primary">
 			<div class="panel-heading">
 				Смена №<?= $shift->id ?> от <?= $shift->startedAt ?> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				Касса: <span class="total-cash"><?= $shift->finalCash ?></span> руб. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				Касса: <span class="total-cash"><?= $shift->finalCash ?> = <?= $shift->finalPrice ?> - <?= $shift->discounts ?></span> руб. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				Администратору: <span class="administrator-payment"><?= $shift->administratorPayment ?></span>
 				<a href="/site/close-shift" class="btn btn-xs btn-danger" style="float: right" data-confirm="Смена будет закрыта">Закрыть смену</a>
 			</div>
@@ -53,7 +53,7 @@ $this->title = 'Тайм';
 						<tr>
 							<td><?= $i + 1 ?></td>
 							<?php foreach ($row as $value) {
-								echo "<td>$value</td>";
+								echo "<td class='maintable-cell'>$value</td>";
 							} ?>
 							<td></td>
 						</tr>

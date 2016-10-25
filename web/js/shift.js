@@ -1,3 +1,27 @@
+$(function () {
+    $('.editable').click(toggleEditable);
+    $('.master-leave').click(masterLeave)
+    $('.add-haircut').click(addHaircut)
+    $('#haircut-modal').on('shown.bs.modal', function() {
+        $('.new-material').find('input[name=name]').focus()
+    })
+
+    $(".haircut-price-input").on("click", function () {
+        $(this).select();
+    });
+    $('#master-arrive').click(function() {
+        var master = $(this).parent().siblings('.modal-body').find('[name=master]')
+        $.get('site/master-arrive',
+            {'id': master.val()},
+            function(result) {
+                if (result) {
+                    $('#master-modal').modal('hide')
+                    masterArrive(master.val(), master.find('option:selected').text())
+                }
+            })
+    })
+
+})
 function redrawTotalTable() {
 	$.get('/site/get-total-table', null, function(result) {
 		var body = $('<tbody>')
@@ -14,17 +38,6 @@ function redrawTotalTable() {
 	}, 'JSON')
 }
 
-$('#master-arrive').click(function() {
-	var master = $(this).parent().siblings('.modal-body').find('[name=master]')
-	$.get('site/master-arrive',
-		{'id': master.val()},
-		function(result) {
-			if (result) {
-				$('#master-modal').modal('hide')
-				masterArrive(master.val(), master.find('option:selected').text())
-			}
-		})
-})
 
 function masterArrive(id, name) {
 	var table = $('#shift-table')
@@ -32,7 +45,7 @@ function masterArrive(id, name) {
 	window.location.reload()
 }
 
-$('.master-leave').click(masterLeave)
+
 
 function masterLeave() {
 	if (confirm('Вы уверены, что хотите произвести расчет?')) {
@@ -45,7 +58,7 @@ function masterLeave() {
 	}
 }
 
-$('.add-haircut').click(addHaircut)
+
 
 function addHaircut() {
 	if ($('.dismissable').length == 0) {
@@ -53,14 +66,16 @@ function addHaircut() {
 		var td = $(this).closest('td')
 		var masterID = $(this).closest('table').find('th').eq(td.index()).data('master-id')
 		var table = $(this).closest('table')
-		$.get('site/add-haircut', {'masterID': masterID}, function(haircut) {
+		$.get('site/add-haircut', {'masterID': masterID}, function(json) {
+		    var haircut = json.haircut;
 			if (haircut) {
 				redrawTotalTable()
 				var input = $('<input>', {class: 'form-control input-sm dismissable'})
 					.data('haircut-id', haircut.id)
 					.val(haircut.price)
 					.focusout(toggleDismissable)
-					.keyup(function(e) { if (e.keyCode == 13) { $(this).blur() } })
+					.keyup(function(e) { if (e.keyCode == 13) { $(this).blur() } });
+                input = json.input;
 				if (isLast) {
 					var tr = td.closest('tr').clone()
 					$.each(tr.find('td'), function(i, ui) {
@@ -88,13 +103,18 @@ function addHaircut() {
 				$('.dismissable').off('click').bind('click', toggleDismissable)
 				$('#add-master-to-stack').parent().siblings('td:last').children('select').val(masterID)
 				$('#add-master-to-stack').click()
-				$('input.dismissable').focus().select()
+				$('input.dismissable').focus().select();
+                $(".haircut-price-input").on("click", function () {
+                    $(this).select();
+                });
+                $('#haircut-price-'+haircut.id).select();
 			}
 		}, 'JSON')
 	}
 }
 
-$('.editable').click(toggleEditable)
+
+
 
 function toggleEditable() {
 	if ($('.dismissable').length == 0) {
@@ -110,9 +130,6 @@ function toggleEditable() {
 }
 
 
-$('#haircut-modal').on('shown.bs.modal', function() {
-	$('.new-material').find('input[name=name]').focus()
-})
 
 function removeMaterial() {
 	var row = $(this).closest('tr')
@@ -170,7 +187,8 @@ function toggleDismissable() {
 	var value = input.val()
 	if (value && $.isNumeric(value)) {
 		input.parent().removeClass('has-error')
-		$.get('site/update-haircutprice', {'id': input.data('haircut-id'), 'price': value}, function(haircut) {
+		$.get('site/update-haircutprice', {'id': input.data('haircut-id'), 'price': value}, function(json) {
+		    var haircut = json.haircut;
 			if (haircut) {
 				console.log('dismissable');
 				redrawTotalTable();

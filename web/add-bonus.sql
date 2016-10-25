@@ -20,7 +20,7 @@ CREATE INDEX "haircut_idx" on bonus (haircut ASC);
 ALTER table "haircut"  ADD  "bonus_id" INTEGER;
 CREATE INDEX "haircut_bonus_id_idx" on haircut (bonus_id ASC);
 
-ALTER table "haircut"  ADD  "original_price" INTEGER;
+ALTER table "haircut"  ADD  "discount" INTEGER;
 
 ALTER table "haircut"  ADD "card_id" INTEGER;
 CREATE INDEX "haircut_card_id_idx" on haircut (card_id ASC);

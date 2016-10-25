@@ -12,7 +12,7 @@ use Yii;
  * @property integer $master_id
  * @property integer $id
  * @property integer $bonus_id
- * @property integer $original_price
+ * @property integer $discount
  */
 class Haircut extends \yii\db\ActiveRecord
 {
@@ -31,7 +31,7 @@ class Haircut extends \yii\db\ActiveRecord
     {
         return [
             [['price'], 'number'],
-            [['shift_id', 'master_id', 'bonus_id', 'original_price'], 'integer']
+            [['shift_id', 'master_id', 'bonus_id', 'discount'], 'integer']
         ];
     }
 
@@ -80,5 +80,19 @@ class Haircut extends \yii\db\ActiveRecord
         $material->haircut_id = $this->id;
         $material->save();
         return $material->attributes;
+    }
+
+    public function drawInputCell()
+    {
+        $haircut = $this;
+        $isBonus = $haircut->bonus_id ? ' hasBonus ' : '';
+        $isDiscount = $haircut->discount ? ' hasDiscount ' : '';
+        return "<input value='{$haircut->price}' class='haircut-price-input $isBonus $isDiscount' onfocus='$(this).toggleClass(\"hpi-focused\",1)' onblur='$(this).toggleClass(\"hpi-focused\",0)' onkeyup='restoreHaircutPriceInput(this,event)' data-id='{$haircut->id}' id='haircut-price-{$haircut->id}'/> 
+    <span class='btn btn-xs btn-default glyphicon glyphicon-pencil' style='float: right' onclick='haircutDialog({$haircut->id})'></span>
+    <div  class='haircut-discount'>
+    <span id='haircut-discount-{$haircut->id}'>".($haircut->discount ?$haircut->price - $haircut->discount:'')."</span>
+    </div>
+";
+
     }
 }

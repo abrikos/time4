@@ -28,11 +28,62 @@ function redrawBonus(haircut) {
 }
 
 
+function haircutDialog(id) {
+    var modal = $('#haircut-modal');
+    modal.modal();
+    $.get('site/get-haircut', {'id': id}, function(result) {
+        var modalbody = modal.find('.modal-body');
+        modalbody.empty()
+            .append(
+                $('<input>', {class: 'form-control', placeholder: 'Пометки', name: 'note'}).val(result.note)
+            )
+            .append(tmpl("bonus-form", result))
+            .append('<br>')
+            .append(
+                $('<table>', {class: 'table-condensed'}).append(
+                    $('<tr>')
+                        .append($('<th>', {width: '70%'}).text('Материал'))
+                        .append($('<th>', {width: '20%'}).text('Цена'))
+                        .append($('<th>', {width: '10%'}).text(''))
+                )
+            );
+
+        $.each(result.materials, function(i, material) {
+            $('<tr>')
+                .data('material-id', material.id)
+                .append($('<td>').text(material.name))
+                .append($('<td>').text(material.price))
+                .append($('<td>')
+                    .append(
+                        $('<i>', {class: 'btn btn-warning btn-xs glyphicon glyphicon-remove'})
+                            .click(removeMaterial)
+                    )
+                )
+                .appendTo(modal.find('table'))
+        })
+        $('<tr class="new-material">')
+            .data('haircut-id', id)
+            .append($('<td>', {style: 'padding-right: 10px'}).append(
+                $('<input>', {class: 'form-control', name: 'name'}))
+                .focusin(function(e) { $(e.target).parent().removeClass('has-error') })
+                .keyup(function(e) { $(e.target).parent().removeClass('has-error'); if (e.keyCode == 13) { addMaterial() } })
+            )
+            .append($('<td>', {style: 'padding-right: 10px'}).append(
+                $('<input>', {class: 'form-control', name: 'price'}))
+                .focusin(function(e) { $(e.target).parent().removeClass('has-error') })
+                .keyup(function(e) { $(e.target).parent().removeClass('has-error'); if (e.keyCode == 13) { addMaterial() } })
+            )
+            .append($('<td>')
+                .append($('<i>', {class: 'btn btn-primary btn-xs glyphicon glyphicon-plus'}))
+                .click(addMaterial)
+            )
+            .appendTo(modal.find('table'))
+    }, 'JSON')
+}
 
 
 
-
-$('#haircut-modal').on('show.bs.modal', function(e) {
+$('#haircut-modal2').on('show.bs.modal', function(e) {
     var id = $(e.relatedTarget).siblings('.editable').data('haircut-id')
     var modal = $(this)
     modal.data('haircut-id', id)
@@ -86,6 +137,19 @@ $('#haircut-modal').on('show.bs.modal', function(e) {
     }, 'JSON')
 })
 
+function restoreHaircutPriceInput(obj,e) {
+     if (e.keyCode == 13) {
+         var input = $(obj);
+         $.getJSON('/haircut/change-price',{id:input.data('id'),price:input.val()},function (json) {
+             input.blur()
+             if(json.error){
+                 alert(json.error);
+             }
+         })
+
+
+     }
+}
 
 
 function bonusAdd(id) {
@@ -108,7 +172,9 @@ function discountAdd(id) {
             $('#card-info').fadeIn();
             $('#haircut-bonus').html(json.bonus.price);
             $('#card-bonus').html(json.card.bonus);
-            $('#haircut-price-'+id).addClass('hasDiscount').text(json.haircut.price);
+            $('#haircut-price-'+id).addClass('hasDiscount');
+            $('#haircut-discount-'+id).text(json.haircut.price - json.haircut.discount);
+            $('#haircut-payment').text(json.haircut.price - json.haircut.discount);
         }
     })
 }

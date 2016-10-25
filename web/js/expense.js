@@ -1,39 +1,43 @@
-$('#add-expense').click(function() {
-	var form = $(this).parent().siblings('.modal-body')
-	var name = form.find('[name=name]')
-	var amount = form.find('[name=amount]')
-	var validate = true
-	if (!name.val()) {
-		name.parent().addClass('has-error')
-		validate = false
-	}
-	if (!amount.val() || !$.isNumeric(amount.val())) {
-		amount.parent().addClass('has-error')
-		validate = false
-	}
-	if (validate) {
-		$.get('site/add-expense',
-			{
-				'name': name.val(),
-				'amount': amount.val(),
-			},
-			function(result) {
-				if (result) {
-					$('#expense-modal').modal('hide')
-					reloadExpense()
-				}
-			})
-	}
-})
+$(function () {
+	$('#add-expense').click(function() {
+		var form = $(this).parent().siblings('.modal-body')
+		var name = form.find('[name=name]')
+		var amount = form.find('[name=amount]')
+		var validate = true
+		if (!name.val()) {
+			name.parent().addClass('has-error')
+			validate = false
+		}
+		if (!amount.val() || !$.isNumeric(amount.val())) {
+			amount.parent().addClass('has-error')
+			validate = false
+		}
+		if (validate) {
+			$.get('site/add-expense',
+				{
+					'name': name.val(),
+					'amount': amount.val(),
+				},
+				function(result) {
+					if (result) {
+						$('#expense-modal').modal('hide')
+						reloadExpense()
+					}
+				})
+		}
+	})
 
-$('#expense-modal').on('shown.bs.modal', function () {
-	$(this).find('[name=name]').focus()
-})
+	$('#expense-modal').on('shown.bs.modal', function () {
+		$(this).find('[name=name]').focus()
+	})
 
-$('#expense-modal').on('hidden.bs.modal', function () {
-	$(this).find('[name=name]').val('')
-	$(this).find('[name=amount]').val('')
-})
+	$('#expense-modal').on('hidden.bs.modal', function () {
+		$(this).find('[name=name]').val('')
+		$(this).find('[name=amount]').val('')
+	});
+	$('.remove-expense').click(removeExpense)
+
+});
 
 function reloadExpense() {
 	$.get('site/get-expense', null,
@@ -58,7 +62,7 @@ function reloadExpense() {
 		}, 'JSON')
 }
 
-$('.remove-expense').click(removeExpense)
+
 
 function removeExpense() {
 	var row = $(this).closest('tr')

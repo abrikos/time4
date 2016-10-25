@@ -1,4 +1,8 @@
-$('.prepayment').click(togglePrepayment)
+$(function () {
+	$('.prepayment').click(togglePrepayment)
+	$('.penalty').click(togglePenalty)
+})
+
 
 function togglePrepayment() {
 	var master = $('#shift-table').find('th').eq($(this).closest('td').index())
@@ -33,7 +37,7 @@ function dismissPrepayment() {
 	}
 }
 
-$('.penalty').click(togglePenalty)
+
 
 function togglePenalty() {
 	var master = $('#shift-table').find('th').eq($(this).closest('td').index())
